@@ -15,18 +15,14 @@ import tools.fastlane.screengrab.Screengrab;
 import tools.fastlane.screengrab.locale.LocaleTestRule;
 
 import static android.support.test.InstrumentationRegistry.getInstrumentation;
-import static android.support.test.espresso.Espresso.onData;
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.Espresso.openActionBarOverflowOrOptionsMenu;
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
-import static android.support.test.espresso.matcher.ViewMatchers.withClassName;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withParent;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.Matchers.allOf;
-import static org.hamcrest.Matchers.endsWith;
-import static org.hamcrest.core.IsAnything.anything;
 
 @RunWith(AndroidJUnit4.class)
 public class ScreenGrabTest {
@@ -40,6 +36,7 @@ public class ScreenGrabTest {
     @Test
     public void screenGrabTest() throws InterruptedException {
 
+        // Wait for app to load, and take the initial screenshot
         //Screengrab.setDefaultScreenshotStrategy(new UiAutomatorScreenshotStrategy());
         //Thread.sleep(3000);
         ViewInteraction appCompatImageButton = onView(
@@ -54,14 +51,9 @@ public class ScreenGrabTest {
         /*
         ViewInteraction appCompatTextView = onView(
                 allOf(withClassName(equalTo("ListView")),
-                        isDisplayed()))
-                ;
+                        isDisplayed());
         appCompatTextView.perform(click());
         */
-
-        onData(anything())
-                .inAdapterView(R.id.).atPosition(1)
-                .perform(click());
 
         openActionBarOverflowOrOptionsMenu(getInstrumentation().getTargetContext());
         //Screengrab.screenshot("settings_menu");
