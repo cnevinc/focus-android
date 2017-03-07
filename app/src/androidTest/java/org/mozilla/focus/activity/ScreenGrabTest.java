@@ -138,74 +138,34 @@ public class ScreenGrabTest {
         // TBD
         //Screengrab.screenshot("BlockOtherContentTrackers");
 
-        /* About Page */
-        SettingsViewMenuButton.click();
-        UiObject AboutItem = mDevice.findObject(new UiSelector()
-                .className("android.widget.LinearLayout")
-                .instance(0)
-                .enabled(true));
-        appItem.click();
-        mDevice.wait(Until.gone(settingsHeading),timeOut);
-        Screengrab.screenshot("About_Page");
-        mDevice.pressBack();
-         /* Help Page */
-        SettingsViewMenuButton.click();
-        UiObject HelpItem = mDevice.findObject(new UiSelector()
-                .className("android.widget.LinearLayout")
-                .instance(1));
-        HelpItem.click();
-        mDevice.wait(Until.gone(settingsHeading),timeOut);
-        Screengrab.screenshot("Help_Page");
-        mDevice.pressBack();
-         /* Your Rights Page */
-        SettingsViewMenuButton.click();
-        UiObject RightsItem = mDevice.findObject(new UiSelector()
-                .className("android.widget.LinearLayout")
-                .instance(2));
-        RightsItem.click();
-        mDevice.wait(Until.gone(settingsHeading),timeOut);
-        Screengrab.screenshot("YourRights_Page");
-        mDevice.pressBack();
-
-
-
-
-
-
-        /* Take Settings View */
-
-        /*
-        ViewInteraction appCompatTextView = onView(
-                allOf(withClassName(equalTo("ListView")),
-                        isDisplayed());
-        appCompatTextView.perform(click());
-        */
-
-        //openActionBarOverflowOrOptionsMenu(getInstrumentation().getTargetContext());
-        //Screengrab.screenshot("settings_menu");
-
-        /* take Auto-suggestion View */
-
-        /* Take webView menu */
-
-        /* Take Share menu */
-
-        /* Take Open with menu */
-
-        /* Take 'Your Browsing History is Erased notification */
-
-        /* Take About View */
-
-        /* Take Help View */
-
-        /* Take Your Rights View */
-
-        /*
-        ViewInteraction appCompatTextView2 = onView(
-                allOf(withId(R.id.title), withText("About"), isDisplayed()));
-        appCompatTextView2.perform(click());
-        Screengrab.screenshot("about_view");
-        */
+//        /* About Page */
+//        SettingsViewMenuButton.click();
+//        UiObject AboutItem = mDevice.findObject(new UiSelector()
+//                .className("android.widget.LinearLayout")
+//                .instance(0)
+//                .enabled(true));
+//        appItem.click();
+//        mDevice.wait(Until.gone(settingsHeading),timeOut);
+//        Screengrab.screenshot("About_Page");
+//        mDevice.pressBack();
+//         /* Help Page */
+//        SettingsViewMenuButton.click();
+//        UiObject HelpItem = mDevice.findObject(new UiSelector()
+//                .className("android.widget.LinearLayout")
+//                .instance(1));
+//        HelpItem.click();
+//        mDevice.wait(Until.gone(settingsHeading),timeOut);
+//        Screengrab.screenshot("Help_Page");
+//        mDevice.pressBack();
+//         /* Your Rights Page */
+//        SettingsViewMenuButton.click();
+//        UiObject RightsItem = mDevice.findObject(new UiSelector()
+//                .className("android.widget.LinearLayout")
+//                .instance(2));
+//        RightsItem.click();
+//        mDevice.wait(Until.gone(settingsHeading),timeOut);
+//        Screengrab.screenshot("YourRights_Page");
+//        mDevice.pressBack();
     }
 
 }
