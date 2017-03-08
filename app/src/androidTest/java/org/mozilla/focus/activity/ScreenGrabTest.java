@@ -1,5 +1,7 @@
 package org.mozilla.focus.activity;
 
+import android.content.Context;
+import android.preference.PreferenceManager;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.espresso.ViewInteraction;
 import android.support.test.rule.ActivityTestRule;
@@ -32,6 +34,7 @@ import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withParent;
 import static android.view.KeyEvent.KEYCODE_ENTER;
 import static org.hamcrest.Matchers.allOf;
+import static org.mozilla.focus.fragment.FirstrunFragment.FIRSTRUN_PREF;
 
 @RunWith(AndroidJUnit4.class)
 public class ScreenGrabTest {
@@ -40,12 +43,25 @@ public class ScreenGrabTest {
     public static final LocaleTestRule localeTestRule = new LocaleTestRule();
 
     @Rule
-    public ActivityTestRule<MainActivity> mActivityTestRule = new ActivityTestRule<>(MainActivity.class);
+    public ActivityTestRule<MainActivity> mActivityTestRule
+            = new ActivityTestRule<MainActivity>(MainActivity.class) {
 
-    private UiDevice mDevice;
+        @Override
+        protected void beforeActivityLaunched() {
+            super.beforeActivityLaunched();
+            Context appContext = InstrumentationRegistry.getInstrumentation()
+                    .getTargetContext()
+                    .getApplicationContext();
+            PreferenceManager.getDefaultSharedPreferences(appContext)
+                    .edit()
+                    .putBoolean(FIRSTRUN_PREF, false)
+                    .apply();
+        }
+    };
 
     @Test
     public void screenGrabTest() throws InterruptedException, UiObjectNotFoundException {
+        UiDevice mDevice;
         final int timeOut = 1000 * 10;
 
         // Initialize UiDevice instance
@@ -53,8 +69,10 @@ public class ScreenGrabTest {
         Screengrab.setDefaultScreenshotStrategy(new UiAutomatorScreenshotStrategy());
 
         /* Wait for app to load, and take the First View screenshot */
-        // TBD
-        //Screengrab.screenshot("First_View");
+        ViewInteraction appCompatButton = onView(
+                allOf(withId(R.id.firstrun_exitbutton), isDisplayed()));
+        Screengrab.screenshot("First_View");
+        appCompatButton.perform(click());
 
         /* Home View*/
         BySelector urlbar = By.clazz("android.widget.TextView")
@@ -134,6 +152,7 @@ public class ScreenGrabTest {
         Screengrab.screenshot("SettingsViewMenu");
         mDevice.pressBack();
 
+
         /* Settings - BlockOtherContentTrackers */
         // TBD
         //Screengrab.screenshot("BlockOtherContentTrackers");
@@ -167,5 +186,4 @@ public class ScreenGrabTest {
 //        Screengrab.screenshot("YourRights_Page");
 //        mDevice.pressBack();
     }
-
 }
