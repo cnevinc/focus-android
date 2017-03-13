@@ -149,7 +149,7 @@ public class ScreenGrabTest {
         appCompatImageButton.perform(click());
         UiObject appItem = mDevice.findObject(new UiSelector()
                 .className("android.widget.LinearLayout")
-                .instance(0));
+                .instance(3));
         appItem.click();
         BySelector settingsHeading = By.clazz("android.view.View")
                 .res("org.mozilla.focus.debug","toolbar")
