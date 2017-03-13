@@ -1,6 +1,7 @@
 package org.mozilla.focus.activity;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.preference.PreferenceManager;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.espresso.ViewInteraction;
@@ -11,6 +12,7 @@ import android.support.test.uiautomator.BySelector;
 import android.support.test.uiautomator.UiDevice;
 import android.support.test.uiautomator.UiObject;
 import android.support.test.uiautomator.UiObjectNotFoundException;
+import android.support.test.uiautomator.UiScrollable;
 import android.support.test.uiautomator.UiSelector;
 import android.support.test.uiautomator.Until;
 import android.webkit.WebView;
@@ -39,6 +41,8 @@ import static org.mozilla.focus.fragment.FirstrunFragment.FIRSTRUN_PREF;
 @RunWith(AndroidJUnit4.class)
 public class ScreenGrabTest {
 
+    private Resources resources;
+
     @ClassRule
     public static final LocaleTestRule localeTestRule = new LocaleTestRule();
 
@@ -49,12 +53,16 @@ public class ScreenGrabTest {
         @Override
         protected void beforeActivityLaunched() {
             super.beforeActivityLaunched();
+
             Context appContext = InstrumentationRegistry.getInstrumentation()
                     .getTargetContext()
                     .getApplicationContext();
+            resources = appContext.getResources();
+
             PreferenceManager.getDefaultSharedPreferences(appContext)
                     .edit()
                     .putBoolean(FIRSTRUN_PREF, false)
+                    .putBoolean(resources.getString(R.string.pref_key_secure), false)
                     .apply();
         }
     };
@@ -104,6 +112,20 @@ public class ScreenGrabTest {
 
         appCompatImageButton.perform(click());
         Screengrab.screenshot("MainViewMenu");
+
+        /* Your Rights Page */
+        UiObject RightsItem = mDevice.findObject(new UiSelector()
+                .className("android.widget.LinearLayout")
+                .instance(2));
+        RightsItem.click();
+
+        BySelector RightsWebView = By.clazz("android.webkit.Webview")
+                .res("org.mozilla.focus.debug","webview")
+                .focused(true)
+                .enabled(true);
+
+        mDevice.wait(Until.hasObject(RightsWebView),timeOut);
+        Screengrab.screenshot("YourRights_Page");
         mDevice.pressBack();
 
         /* Location Bar View */
@@ -157,11 +179,26 @@ public class ScreenGrabTest {
         mDevice.wait(Until.hasObject(settingsHeading),timeOut);
         Screengrab.screenshot("Settings_View_Top");
 
+        /* Search Engine List */
+        UiScrollable settingsList = new UiScrollable(new UiSelector()
+                .resourceId("android:id/list").scrollable(true));
+        UiObject SearchEngineSelection = settingsList.getChild(new UiSelector()
+                .className("android.widget.LinearLayout")
+                .instance(0));
+        SearchEngineSelection.click();
+        mDevice.wait(Until.gone(settingsHeading),timeOut);
+        Screengrab.screenshot("SearchEngine_Selection");
+
+        UiObject cancelBtn = mDevice.findObject(new UiSelector()
+                .className("android.widget.Button")
+                .resourceId("android:id/button2"));
+        cancelBtn.click();
+        mDevice.wait(Until.hasObject(settingsHeading),timeOut);
+
         // scroll down
         swipeDownNotificationBar(mDevice);
         Screengrab.screenshot("Settings_View_Bottom");
 
-        mDevice.pressBack();
         /* Settings - BlockOtherContentTrackers */
         // TBD
         //Screengrab.screenshot("BlockOtherContentTrackers");
@@ -185,14 +222,7 @@ public class ScreenGrabTest {
 //        mDevice.wait(Until.gone(settingsHeading),timeOut);
 //        Screengrab.screenshot("Help_Page");
 //        mDevice.pressBack();
-//         /* Your Rights Page */
-//        SettingsViewMenuButton.click();
-//        UiObject RightsItem = mDevice.findObject(new UiSelector()
-//                .className("android.widget.LinearLayout")
-//                .instance(2));
-//        RightsItem.click();
-//        mDevice.wait(Until.gone(settingsHeading),timeOut);
-//        Screengrab.screenshot("YourRights_Page");
-//        mDevice.pressBack();
+         /* Your Rights Page */
+
     }
 }

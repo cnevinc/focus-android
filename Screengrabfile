@@ -6,7 +6,10 @@ use_tests_in_packages ['org.mozilla.focus.activity']
 app_apk_path 'app/build/outputs/apk/app-focus-webkit-debug.apk'
 tests_apk_path 'app/build/outputs/apk/app-focus-webkit-debug-androidTest.apk'
 
-locales locales ['lo']
+locales locales ['ar', 'az', 'bn-BD', 'cs', 'cy', 'de', 'eo', 'es-ES', 'es-MX',
+ 'fr', 'fy-NL', 'he', 'hu', 'hy-AM', 'id', 'it', 'ja', 'kab', 'lo', 'nl',
+'pl', 'pt-BR', 'ru', 'sk', 'sl', 'sq', 'sv-SE', 'th', 'tr', 'uk', 'zh-CN',
+'zh-TW']
 
 # clear all previously generated screenshots in your local output directory before creating new ones
 clear_previous_screenshots true
