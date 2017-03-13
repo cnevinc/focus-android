@@ -59,6 +59,20 @@ public class ScreenGrabTest {
         }
     };
 
+    public static void swipeDownNotificationBar (UiDevice deviceInstance) {
+        int dHeight = deviceInstance.getDisplayHeight();
+        int dWidth = deviceInstance.getDisplayWidth();
+        int xScrollPosition = dWidth/2;
+        int yScrollStop = dHeight/4;
+        deviceInstance.swipe(
+                xScrollPosition,
+                yScrollStop,
+                xScrollPosition,
+                0,
+                20
+        );
+    }
+
     @Test
     public void screenGrabTest() throws InterruptedException, UiObjectNotFoundException {
         UiDevice mDevice;
@@ -141,18 +155,13 @@ public class ScreenGrabTest {
                 .res("org.mozilla.focus.debug","toolbar")
                 .enabled(true);
         mDevice.wait(Until.hasObject(settingsHeading),timeOut);
-        Screengrab.screenshot("Settings_View");
+        Screengrab.screenshot("Settings_View_Top");
 
-        /* Take Settings View Menu */
-        UiObject SettingsViewMenuButton = mDevice.findObject(new UiSelector()
-                .className("android.support.v7.widget.LinearLayoutCompat")
-                .instance(0));
-        SettingsViewMenuButton.click();
+        // scroll down
+        swipeDownNotificationBar(mDevice);
+        Screengrab.screenshot("Settings_View_Bottom");
 
-        Screengrab.screenshot("SettingsViewMenu");
         mDevice.pressBack();
-
-
         /* Settings - BlockOtherContentTrackers */
         // TBD
         //Screengrab.screenshot("BlockOtherContentTrackers");
