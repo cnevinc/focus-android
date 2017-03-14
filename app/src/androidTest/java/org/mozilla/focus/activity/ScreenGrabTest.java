@@ -4,6 +4,9 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.preference.PreferenceManager;
 import android.support.test.InstrumentationRegistry;
+import android.support.test.espresso.Espresso;
+import android.support.test.espresso.IdlingPolicies;
+import android.support.test.espresso.IdlingResource;
 import android.support.test.espresso.ViewInteraction;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
@@ -15,6 +18,7 @@ import android.support.test.uiautomator.UiObjectNotFoundException;
 import android.support.test.uiautomator.UiScrollable;
 import android.support.test.uiautomator.UiSelector;
 import android.support.test.uiautomator.Until;
+import android.text.format.DateUtils;
 import android.webkit.WebView;
 
 import org.junit.ClassRule;
@@ -22,6 +26,8 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mozilla.focus.R;
+
+import java.util.concurrent.TimeUnit;
 
 import tools.fastlane.screengrab.Screengrab;
 import tools.fastlane.screengrab.UiAutomatorScreenshotStrategy;
@@ -67,6 +73,8 @@ public class ScreenGrabTest {
         }
     };
 
+    private IdlingResource mIdlingResource;
+
     public static void swipeDownNotificationBar (UiDevice deviceInstance) {
         int dHeight = deviceInstance.getDisplayHeight();
         int dWidth = deviceInstance.getDisplayWidth();
@@ -81,10 +89,13 @@ public class ScreenGrabTest {
         );
     }
 
+
     @Test
     public void screenGrabTest() throws InterruptedException, UiObjectNotFoundException {
         UiDevice mDevice;
-        final int timeOut = 1000 * 10;
+        final long waitingTime = DateUtils.SECOND_IN_MILLIS * 5;
+        IdlingPolicies.setMasterPolicyTimeout(waitingTime * 2, TimeUnit.MILLISECONDS);
+        IdlingPolicies.setIdlingResourceTimeout(waitingTime * 2, TimeUnit.MILLISECONDS);
 
         // Initialize UiDevice instance
         mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation());
@@ -100,14 +111,12 @@ public class ScreenGrabTest {
         BySelector urlbar = By.clazz("android.widget.TextView")
                 .res("org.mozilla.focus.debug","url")
                 .clickable(true);
-        mDevice.wait(Until.hasObject(urlbar),timeOut);
+        mDevice.wait(Until.hasObject(urlbar),waitingTime);
         Screengrab.screenshot("Home_View");
 
         /* Main View Menu */
         ViewInteraction appCompatImageButton = onView(
                 allOf(withId(R.id.menu),
-                        withParent(allOf(withId(R.id.activity_main),
-                                withParent(withId(R.id.container)))),
                         isDisplayed()));
 
         appCompatImageButton.perform(click());
@@ -124,7 +133,7 @@ public class ScreenGrabTest {
                 .focused(true)
                 .enabled(true);
 
-        mDevice.wait(Until.hasObject(RightsWebView),timeOut);
+        mDevice.wait(Until.hasObject(RightsWebView),waitingTime);
         Screengrab.screenshot("YourRights_Page");
         mDevice.pressBack();
 
@@ -141,7 +150,7 @@ public class ScreenGrabTest {
         BySelector hint = By.clazz("android.widget.TextView")
                 .res("org.mozilla.focus.debug","search_hint")
                 .clickable(true);
-        mDevice.wait(Until.hasObject(hint),timeOut);
+        mDevice.wait(Until.hasObject(hint),waitingTime);
         Screengrab.screenshot("SearchFor");
 
         ViewInteraction submitURL = onView(
@@ -149,7 +158,7 @@ public class ScreenGrabTest {
         submitURL.perform(pressKey(KEYCODE_ENTER));
 
         // Wait until view loads
-        mDevice.wait(Until.findObject(By.clazz(WebView.class)), 20000);
+        mDevice.wait(Until.findObject(By.clazz(WebView.class)), waitingTime);
 
         /* Browser View Menu */
         ViewInteraction BrowserViewMenuButton = onView(
@@ -157,6 +166,17 @@ public class ScreenGrabTest {
         BrowserViewMenuButton.perform(click());
         Screengrab.screenshot("BrowserViewMenu");
         mDevice.pressBack();
+
+        /* Connection Error Page */
+        LocationBar.perform(click());
+        inlineAutocompleteEditText.perform(replaceText("www.aaaaaaaabbbb"));
+        submitURL.perform(pressKey(KEYCODE_ENTER));
+        mDevice.wait(Until.findObject(By.clazz(WebView.class).focused(true)
+                .enabled(true)), waitingTime);
+        IdlingResource idlingResource = new ElapsedTimeIdlingResource(waitingTime);
+        Espresso.registerIdlingResources(idlingResource);
+        Screengrab.screenshot("ServerNotFound");
+
 
         /* History Erase Notification */
         ViewInteraction floatingEraseButton = onView(
@@ -176,7 +196,7 @@ public class ScreenGrabTest {
         BySelector settingsHeading = By.clazz("android.view.View")
                 .res("org.mozilla.focus.debug","toolbar")
                 .enabled(true);
-        mDevice.wait(Until.hasObject(settingsHeading),timeOut);
+        mDevice.wait(Until.hasObject(settingsHeading),waitingTime);
         Screengrab.screenshot("Settings_View_Top");
 
         /* Search Engine List */
@@ -186,14 +206,14 @@ public class ScreenGrabTest {
                 .className("android.widget.LinearLayout")
                 .instance(0));
         SearchEngineSelection.click();
-        mDevice.wait(Until.gone(settingsHeading),timeOut);
+        mDevice.wait(Until.gone(settingsHeading),waitingTime);
         Screengrab.screenshot("SearchEngine_Selection");
 
         UiObject cancelBtn = mDevice.findObject(new UiSelector()
                 .className("android.widget.Button")
                 .resourceId("android:id/button2"));
         cancelBtn.click();
-        mDevice.wait(Until.hasObject(settingsHeading),timeOut);
+        mDevice.wait(Until.hasObject(settingsHeading),waitingTime);
 
         // scroll down
         swipeDownNotificationBar(mDevice);
