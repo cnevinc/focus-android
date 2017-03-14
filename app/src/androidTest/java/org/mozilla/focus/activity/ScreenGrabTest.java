@@ -47,8 +47,6 @@ import static org.mozilla.focus.fragment.FirstrunFragment.FIRSTRUN_PREF;
 @RunWith(AndroidJUnit4.class)
 public class ScreenGrabTest {
 
-    private Resources resources;
-
     @ClassRule
     public static final LocaleTestRule localeTestRule = new LocaleTestRule();
 
@@ -63,7 +61,7 @@ public class ScreenGrabTest {
             Context appContext = InstrumentationRegistry.getInstrumentation()
                     .getTargetContext()
                     .getApplicationContext();
-            resources = appContext.getResources();
+            Resources resources = appContext.getResources();
 
             PreferenceManager.getDefaultSharedPreferences(appContext)
                     .edit()
@@ -89,7 +87,6 @@ public class ScreenGrabTest {
         );
     }
 
-
     @Test
     public void screenGrabTest() throws InterruptedException, UiObjectNotFoundException {
         UiDevice mDevice;
@@ -105,13 +102,13 @@ public class ScreenGrabTest {
         ViewInteraction appCompatButton = onView(
                 allOf(withId(R.id.firstrun_exitbutton), isDisplayed()));
         Screengrab.screenshot("First_View");
-        appCompatButton.perform(click());
 
         /* Home View*/
+        appCompatButton.perform(click());
         BySelector urlbar = By.clazz("android.widget.TextView")
                 .res("org.mozilla.focus.debug","url")
                 .clickable(true);
-        mDevice.wait(Until.hasObject(urlbar),waitingTime);
+        mDevice.wait(Until.hasObject(urlbar), waitingTime);
         Screengrab.screenshot("Home_View");
 
         /* Main View Menu */
@@ -127,17 +124,16 @@ public class ScreenGrabTest {
                 .className("android.widget.LinearLayout")
                 .instance(2));
         RightsItem.click();
-
-        BySelector RightsWebView = By.clazz("android.webkit.Webview")
+         BySelector RightsWebView = By.clazz("android.webkit.Webview")
                 .res("org.mozilla.focus.debug","webview")
                 .focused(true)
                 .enabled(true);
 
         mDevice.wait(Until.hasObject(RightsWebView),waitingTime);
         Screengrab.screenshot("YourRights_Page");
-        mDevice.pressBack();
 
         /* Location Bar View */
+        mDevice.pressBack();
         ViewInteraction LocationBar = onView(
                 allOf(withId(R.id.url), isDisplayed()));
         LocationBar.perform(click());
@@ -153,21 +149,18 @@ public class ScreenGrabTest {
         mDevice.wait(Until.hasObject(hint),waitingTime);
         Screengrab.screenshot("SearchFor");
 
+        /* Browser View Menu */
         ViewInteraction submitURL = onView(
                 allOf(withId(R.id.url_edit), isDisplayed()));
         submitURL.perform(pressKey(KEYCODE_ENTER));
-
-        // Wait until view loads
         mDevice.wait(Until.findObject(By.clazz(WebView.class)), waitingTime);
-
-        /* Browser View Menu */
         ViewInteraction BrowserViewMenuButton = onView(
                 allOf(withId(R.id.menu), isDisplayed()));
         BrowserViewMenuButton.perform(click());
         Screengrab.screenshot("BrowserViewMenu");
-        mDevice.pressBack();
 
         /* Connection Error Page */
+        mDevice.pressBack();
         LocationBar.perform(click());
         inlineAutocompleteEditText.perform(replaceText("www.aaaaaaaabbbb"));
         submitURL.perform(pressKey(KEYCODE_ENTER));
@@ -176,7 +169,6 @@ public class ScreenGrabTest {
         IdlingResource idlingResource = new ElapsedTimeIdlingResource(waitingTime);
         Espresso.registerIdlingResources(idlingResource);
         Screengrab.screenshot("ServerNotFound");
-
 
         /* History Erase Notification */
         ViewInteraction floatingEraseButton = onView(
@@ -209,13 +201,12 @@ public class ScreenGrabTest {
         mDevice.wait(Until.gone(settingsHeading),waitingTime);
         Screengrab.screenshot("SearchEngine_Selection");
 
+        /* scroll down */
         UiObject cancelBtn = mDevice.findObject(new UiSelector()
                 .className("android.widget.Button")
                 .resourceId("android:id/button2"));
         cancelBtn.click();
         mDevice.wait(Until.hasObject(settingsHeading),waitingTime);
-
-        // scroll down
         swipeDownNotificationBar(mDevice);
         Screengrab.screenshot("Settings_View_Bottom");
 
@@ -242,7 +233,5 @@ public class ScreenGrabTest {
 //        mDevice.wait(Until.gone(settingsHeading),timeOut);
 //        Screengrab.screenshot("Help_Page");
 //        mDevice.pressBack();
-         /* Your Rights Page */
-
     }
 }
