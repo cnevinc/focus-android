@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.preference.PreferenceManager;
 import android.support.test.InstrumentationRegistry;
-import android.support.test.espresso.Espresso;
 import android.support.test.espresso.IdlingPolicies;
 import android.support.test.espresso.IdlingResource;
 import android.support.test.espresso.ViewInteraction;
@@ -66,8 +65,9 @@ public class ScreenGrabTest {
             PreferenceManager.getDefaultSharedPreferences(appContext)
                     .edit()
                     .putBoolean(FIRSTRUN_PREF, false)
-                    .putBoolean(resources.getString(R.string.pref_key_secure), false)
+            //        .putBoolean(resources.getString(R.string.pref_key_secure), false)
                     .apply();
+
         }
     };
 
@@ -77,7 +77,7 @@ public class ScreenGrabTest {
         int dHeight = deviceInstance.getDisplayHeight();
         int dWidth = deviceInstance.getDisplayWidth();
         int xScrollPosition = dWidth/2;
-        int yScrollStop = dHeight/4;
+        int yScrollStop = dHeight/3;
         deviceInstance.swipe(
                 xScrollPosition,
                 yScrollStop,
@@ -101,7 +101,6 @@ public class ScreenGrabTest {
         /* Wait for app to load, and take the First View screenshot */
         ViewInteraction appCompatButton = onView(
                 allOf(withId(R.id.firstrun_exitbutton), isDisplayed()));
-        Screengrab.screenshot("First_View");
 
         /* Home View*/
         appCompatButton.perform(click());
@@ -124,13 +123,27 @@ public class ScreenGrabTest {
                 .className("android.widget.LinearLayout")
                 .instance(2));
         RightsItem.click();
-         BySelector RightsWebView = By.clazz("android.webkit.Webview")
+        BySelector RightsWebView = By.clazz("android.webkit.Webview")
                 .res("org.mozilla.focus.debug","webview")
                 .focused(true)
                 .enabled(true);
-
         mDevice.wait(Until.hasObject(RightsWebView),waitingTime);
         Screengrab.screenshot("YourRights_Page");
+
+        /* About Page */
+        mDevice.pressBack();
+        appCompatImageButton.perform(click());
+        UiObject AboutItem = mDevice.findObject(new UiSelector()
+                .className("android.widget.LinearLayout")
+                .instance(0)
+                .enabled(true));
+        AboutItem.click();
+        BySelector AboutWebView = By.clazz("android.webkit.Webview")
+                .res("org.mozilla.focus.debug","webview")
+                .focused(true)
+                .enabled(true);
+        mDevice.wait(Until.hasObject(AboutWebView),waitingTime);
+        Screengrab.screenshot("About_Page");
 
         /* Location Bar View */
         mDevice.pressBack();
@@ -142,7 +155,7 @@ public class ScreenGrabTest {
         /* Autocomplete View */
         ViewInteraction inlineAutocompleteEditText = onView(
                 allOf(withId(R.id.url_edit), isDisplayed()));
-        inlineAutocompleteEditText.perform(replaceText("www.mozilla.org"));
+        inlineAutocompleteEditText.perform(replaceText("mozilla"));
         BySelector hint = By.clazz("android.widget.TextView")
                 .res("org.mozilla.focus.debug","search_hint")
                 .clickable(true);
@@ -159,18 +172,8 @@ public class ScreenGrabTest {
         BrowserViewMenuButton.perform(click());
         Screengrab.screenshot("BrowserViewMenu");
 
-        /* Connection Error Page */
-        mDevice.pressBack();
-        LocationBar.perform(click());
-        inlineAutocompleteEditText.perform(replaceText("www.aaaaaaaabbbb"));
-        submitURL.perform(pressKey(KEYCODE_ENTER));
-        mDevice.wait(Until.findObject(By.clazz(WebView.class).focused(true)
-                .enabled(true)), waitingTime);
-        IdlingResource idlingResource = new ElapsedTimeIdlingResource(waitingTime);
-        Espresso.registerIdlingResources(idlingResource);
-        Screengrab.screenshot("ServerNotFound");
-
         /* History Erase Notification */
+        mDevice.pressBack();
         ViewInteraction floatingEraseButton = onView(
                 allOf(withId(R.id.erase),
                         withParent(allOf(withId(R.id.main_content),
@@ -199,13 +202,15 @@ public class ScreenGrabTest {
                 .instance(0));
         SearchEngineSelection.click();
         mDevice.wait(Until.gone(settingsHeading),waitingTime);
+        UiObject SearchEngineList = new UiScrollable(new UiSelector()
+                .resourceId("android:id/select_dialog_listview").enabled(true));
+        UiObject FirstSelection = SearchEngineList.getChild(new UiSelector()
+                .className("android.widget.LinearLayout")
+                .instance(0));
         Screengrab.screenshot("SearchEngine_Selection");
 
         /* scroll down */
-        UiObject cancelBtn = mDevice.findObject(new UiSelector()
-                .className("android.widget.Button")
-                .resourceId("android:id/button2"));
-        cancelBtn.click();
+        FirstSelection.click();
         mDevice.wait(Until.hasObject(settingsHeading),waitingTime);
         swipeDownNotificationBar(mDevice);
         Screengrab.screenshot("Settings_View_Bottom");
@@ -214,16 +219,6 @@ public class ScreenGrabTest {
         // TBD
         //Screengrab.screenshot("BlockOtherContentTrackers");
 
-//        /* About Page */
-//        SettingsViewMenuButton.click();
-//        UiObject AboutItem = mDevice.findObject(new UiSelector()
-//                .className("android.widget.LinearLayout")
-//                .instance(0)
-//                .enabled(true));
-//        appItem.click();
-//        mDevice.wait(Until.gone(settingsHeading),timeOut);
-//        Screengrab.screenshot("About_Page");
-//        mDevice.pressBack();
 //         /* Help Page */
 //        SettingsViewMenuButton.click();
 //        UiObject HelpItem = mDevice.findObject(new UiSelector()
