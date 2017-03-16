@@ -39,6 +39,23 @@ import static org.mozilla.focus.fragment.FirstrunFragment.FIRSTRUN_PREF;
 @RunWith(AndroidJUnit4.class)
 public class ScreenGrabTest {
 
+    private enum ErrorTypes {
+        ERROR_UNKNOWN (-1),
+        ERROR_HOST_LOOKUP (-2),
+        ERROR_CONNECT (-6),
+        ERROR_TIMEOUT (-8),
+        ERROR_REDIRECT_LOOP (-9),
+        ERROR_UNSUPPORTED_SCHEME (-10),
+        ERROR_FAILED_SSL_HANDSHAKE (-11),
+        ERROR_BAD_URL (-12),
+        ERROR_TOO_MANY_REQUESTS (-15);
+        private int value;
+
+        private ErrorTypes(int value) {
+            this.value = value;
+        }
+    }
+
     @ClassRule
     public static final LocaleTestRule localeTestRule = new LocaleTestRule();
 
@@ -80,6 +97,7 @@ public class ScreenGrabTest {
     public void screenGrabTest() throws InterruptedException, UiObjectNotFoundException {
         UiDevice mDevice;
         final long waitingTime = DateUtils.SECOND_IN_MILLIS * 5;
+        final String marketURL = "market://details?id=org.mozilla.firefox&referrer=utm_source%3Dmozilla%26utm_medium%3DReferral%26utm_campaign%3Dmozilla-org";
 
         // Initialize UiDevice instance
         mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation());
@@ -200,6 +218,45 @@ public class ScreenGrabTest {
         mDevice.wait(Until.hasObject(settingsHeading),waitingTime);
         swipeDownNotificationBar(mDevice);
         Screengrab.screenshot("Settings_View_Bottom");
+
+        // Go back
+        mDevice.pressBack();
+        urlBar.waitForExists(waitingTime);
+        urlBar.click();
+
+        /* Go to google play market */
+        inlineAutocompleteEditText.waitForExists(waitingTime);
+        inlineAutocompleteEditText.setText(marketURL);
+        mDevice.pressKeyCode(KEYCODE_ENTER);
+        webView.waitForExists(waitingTime);
+
+        //Tap Try again button
+        UiObject tryAgainBtn = mDevice.findObject(new UiSelector()
+                .resourceId("errorTryAgain")
+                .clickable(true));
+        tryAgainBtn.waitForExists(waitingTime);
+        tryAgainBtn.click();
+
+        UiObject cancelBtn = mDevice.findObject(new UiSelector()
+                .resourceId("android:id/button2")
+                .clickable(true));
+        cancelBtn.waitForExists(waitingTime);
+        Screengrab.screenshot("Redirect_Outside");
+        cancelBtn.click();
+        tryAgainBtn.waitForExists(waitingTime);
+
+        for (ScreenGrabTest.ErrorTypes error: ScreenGrabTest.ErrorTypes.values()) {
+            urlBar.click();
+            inlineAutocompleteEditText.waitForExists(waitingTime);
+            inlineAutocompleteEditText.setText("error:"+ error.value);
+            mDevice.pressKeyCode(KEYCODE_ENTER);
+            webView.waitForExists(waitingTime);
+            tryAgainBtn.waitForExists(waitingTime);
+
+            Screengrab.screenshot(error.name());
+        }
+
+
 
 //         /* Help Page */
 //        SettingsViewMenuButton.click();
