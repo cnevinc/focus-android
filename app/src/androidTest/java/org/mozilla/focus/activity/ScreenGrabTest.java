@@ -101,6 +101,7 @@ public class ScreenGrabTest {
         /* Wait for app to load, and take the First View screenshot */
         ViewInteraction appCompatButton = onView(
                 allOf(withId(R.id.firstrun_exitbutton), isDisplayed()));
+        Screengrab.screenshot("First_View");
 
         /* Home View*/
         appCompatButton.perform(click());
@@ -180,6 +181,7 @@ public class ScreenGrabTest {
                                 withParent(withId(R.id.container)))),
                         isDisplayed()));
         floatingEraseButton.perform(click());
+        mDevice.wait(Until.findObject(By.res("org.mozilla.focus.debug","snackbar_text")), waitingTime);
         Screengrab.screenshot("YourBrowingHistoryHasBeenErased");
 
         /* Take Settings View */
@@ -214,10 +216,6 @@ public class ScreenGrabTest {
         mDevice.wait(Until.hasObject(settingsHeading),waitingTime);
         swipeDownNotificationBar(mDevice);
         Screengrab.screenshot("Settings_View_Bottom");
-
-        /* Settings - BlockOtherContentTrackers */
-        // TBD
-        //Screengrab.screenshot("BlockOtherContentTrackers");
 
 //         /* Help Page */
 //        SettingsViewMenuButton.click();
