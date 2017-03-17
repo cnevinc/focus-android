@@ -96,12 +96,13 @@ public class ScreenGrabTest {
     @Test
     public void screenGrabTest() throws InterruptedException, UiObjectNotFoundException {
         UiDevice mDevice;
-        final long waitingTime = DateUtils.SECOND_IN_MILLIS * 5;
+        final long waitingTime = DateUtils.SECOND_IN_MILLIS * 2;
         final String marketURL = "market://details?id=org.mozilla.firefox&referrer=utm_source%3Dmozilla%26utm_medium%3DReferral%26utm_campaign%3Dmozilla-org";
 
         // Initialize UiDevice instance
         mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation());
         Screengrab.setDefaultScreenshotStrategy(new UiAutomatorScreenshotStrategy());
+        Screengrab.screenshot("IGNORE");
 
         /* Wait for app to load, and take the First View screenshot */
         UiObject firstViewBtn = mDevice.findObject(new UiSelector()
@@ -235,11 +236,11 @@ public class ScreenGrabTest {
                 .resourceId("errorTryAgain")
                 .clickable(true));
         tryAgainBtn.waitForExists(waitingTime);
-        tryAgainBtn.click();
+        tryAgainBtn.longClick();
 
         UiObject cancelBtn = mDevice.findObject(new UiSelector()
-                .resourceId("android:id/button2")
-                .clickable(true));
+                .resourceId("android:id/button2"));
+
         cancelBtn.waitForExists(waitingTime);
         Screengrab.screenshot("Redirect_Outside");
         cancelBtn.click();
@@ -255,9 +256,6 @@ public class ScreenGrabTest {
 
             Screengrab.screenshot(error.name());
         }
-
-
-
 //         /* Help Page */
 //        SettingsViewMenuButton.click();
 //        UiObject HelpItem = mDevice.findObject(new UiSelector()
