@@ -229,14 +229,11 @@ public class ScreenGrabTest {
         inlineAutocompleteEditText.waitForExists(waitingTime);
         inlineAutocompleteEditText.setText(marketURL);
         mDevice.pressKeyCode(KEYCODE_ENTER);
-        webView.waitForExists(waitingTime);
+        //webView.waitForExists(waitingTime);
 
         //Tap Try again button
-        UiObject tryAgainBtn = mDevice.findObject(new UiSelector()
-                .resourceId("errorTryAgain")
-                .clickable(true));
-        tryAgainBtn.waitForExists(waitingTime);
-        tryAgainBtn.longClick();
+        //tryAgainBtn.waitForExists(waitingTime);
+        //tryAgainBtn.longClick();
 
         UiObject cancelBtn = mDevice.findObject(new UiSelector()
                 .resourceId("android:id/button2"));
@@ -244,13 +241,17 @@ public class ScreenGrabTest {
         cancelBtn.waitForExists(waitingTime);
         Screengrab.screenshot("Redirect_Outside");
         cancelBtn.click();
-        tryAgainBtn.waitForExists(waitingTime);
+        UiObject tryAgainBtn = mDevice.findObject(new UiSelector()
+                .resourceId("errorTryAgain")
+                .clickable(true));
+        mDevice.pressBack();
+//        tryAgainBtn.waitForExists(waitingTime);
 
         for (ScreenGrabTest.ErrorTypes error: ScreenGrabTest.ErrorTypes.values()) {
             urlBar.click();
             inlineAutocompleteEditText.waitForExists(waitingTime);
-            inlineAutocompleteEditText.setText("error:"+ error.value);
-            mDevice.pressKeyCode(KEYCODE_ENTER);
+            inlineAutocompleteEditText.setText("error:"+ error.value +"\n");
+            //mDevice.pressKeyCode(KEYCODE_ENTER);
             webView.waitForExists(waitingTime);
             tryAgainBtn.waitForExists(waitingTime);
 
