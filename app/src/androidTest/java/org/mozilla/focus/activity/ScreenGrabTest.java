@@ -229,11 +229,6 @@ public class ScreenGrabTest {
         inlineAutocompleteEditText.waitForExists(waitingTime);
         inlineAutocompleteEditText.setText(marketURL);
         mDevice.pressKeyCode(KEYCODE_ENTER);
-        //webView.waitForExists(waitingTime);
-
-        //Tap Try again button
-        //tryAgainBtn.waitForExists(waitingTime);
-        //tryAgainBtn.longClick();
 
         UiObject cancelBtn = mDevice.findObject(new UiSelector()
                 .resourceId("android:id/button2"));
@@ -245,26 +240,16 @@ public class ScreenGrabTest {
                 .resourceId("errorTryAgain")
                 .clickable(true));
         mDevice.pressBack();
-//        tryAgainBtn.waitForExists(waitingTime);
 
         for (ScreenGrabTest.ErrorTypes error: ScreenGrabTest.ErrorTypes.values()) {
             urlBar.click();
             inlineAutocompleteEditText.waitForExists(waitingTime);
-            inlineAutocompleteEditText.setText("error:"+ error.value +"\n");
-            //mDevice.pressKeyCode(KEYCODE_ENTER);
+            inlineAutocompleteEditText.setText("error:"+ error.value);
+            mDevice.pressKeyCode(KEYCODE_ENTER);
             webView.waitForExists(waitingTime);
             tryAgainBtn.waitForExists(waitingTime);
 
             Screengrab.screenshot(error.name());
         }
-//         /* Help Page */
-//        SettingsViewMenuButton.click();
-//        UiObject HelpItem = mDevice.findObject(new UiSelector()
-//                .className("android.widget.LinearLayout")
-//                .instance(1));
-//        HelpItem.click();
-//        mDevice.wait(Until.gone(settingsHeading),timeOut);
-//        Screengrab.screenshot("Help_Page");
-//        mDevice.pressBack();
     }
 }
