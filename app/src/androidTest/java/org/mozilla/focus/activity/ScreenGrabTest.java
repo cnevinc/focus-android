@@ -176,6 +176,32 @@ public class ScreenGrabTest {
         menuButton.perform(click());
         Screengrab.screenshot("BrowserViewMenu");
 
+        /* Open_With View */
+        UiObject openWithBtn = mDevice.findObject(new UiSelector()
+                .resourceId("org.mozilla.focus.debug:id/open_select_browser")
+                .enabled(true));
+        openWithBtn.waitForExists(waitingTime);
+        openWithBtn.click();
+        UiObject shareList = mDevice.findObject(new UiSelector()
+                .resourceId("org.mozilla.focus.debug:id/apps")
+                .enabled(true));
+        openWithBtn.waitForExists(waitingTime);
+        Screengrab.screenshot("OpenWith_Dialog");
+
+        /* Share View */
+        mDevice.pressBack();
+        menuButton.perform(click());
+        UiObject shareBtn = mDevice.findObject(new UiSelector()
+                .resourceId("org.mozilla.focus.debug:id/share")
+                .enabled(true));
+        shareBtn.waitForExists(waitingTime);
+        shareBtn.click();
+        UiObject applist = mDevice.findObject(new UiSelector()
+                .resourceId("android:id/resolver_list")
+                .enabled(true));
+        openWithBtn.waitForExists(waitingTime);
+        Screengrab.screenshot("Share_Dialog");
+
         /* History Erase Notification */
         mDevice.pressBack();
         ViewInteraction floatingEraseButton = onView(
