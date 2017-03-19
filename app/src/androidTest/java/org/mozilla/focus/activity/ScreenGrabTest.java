@@ -185,7 +185,7 @@ public class ScreenGrabTest {
         UiObject shareList = mDevice.findObject(new UiSelector()
                 .resourceId("org.mozilla.focus.debug:id/apps")
                 .enabled(true));
-        openWithBtn.waitForExists(waitingTime);
+        shareList.waitForExists(waitingTime);
         Screengrab.screenshot("OpenWith_Dialog");
 
         /* Share View */
@@ -199,7 +199,7 @@ public class ScreenGrabTest {
         UiObject applist = mDevice.findObject(new UiSelector()
                 .resourceId("android:id/resolver_list")
                 .enabled(true));
-        openWithBtn.waitForExists(waitingTime);
+        applist.waitForExists(waitingTime);
         Screengrab.screenshot("Share_Dialog");
 
         /* History Erase Notification */
@@ -274,7 +274,6 @@ public class ScreenGrabTest {
             mDevice.pressKeyCode(KEYCODE_ENTER);
             webView.waitForExists(waitingTime);
             tryAgainBtn.waitForExists(waitingTime);
-
             Screengrab.screenshot(error.name());
         }
     }
