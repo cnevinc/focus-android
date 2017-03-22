@@ -31,7 +31,6 @@ import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
-import static android.support.test.espresso.matcher.ViewMatchers.withParent;
 import static android.view.KeyEvent.KEYCODE_ENTER;
 import static org.hamcrest.Matchers.allOf;
 import static org.mozilla.focus.fragment.FirstrunFragment.FIRSTRUN_PREF;
@@ -97,7 +96,8 @@ public class ScreenGrabTest {
     public void screenGrabTest() throws InterruptedException, UiObjectNotFoundException {
         UiDevice mDevice;
         final long waitingTime = DateUtils.SECOND_IN_MILLIS * 2;
-        final String marketURL = "market://details?id=org.mozilla.firefox&referrer=utm_source%3Dmozilla%26utm_medium%3DReferral%26utm_campaign%3Dmozilla-org";
+        final String marketURL = "market://details?id=org.mozilla.firefox&referrer=utm_source%3D" +
+                "mozilla%26utm_medium%3DReferral%26utm_campaign%3Dmozilla-org";
 
         // Initialize UiDevice instance
         mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation());
@@ -206,8 +206,6 @@ public class ScreenGrabTest {
         mDevice.pressBack();
         ViewInteraction floatingEraseButton = onView(
                 allOf(withId(R.id.erase),
-                        withParent(allOf(withId(R.id.main_content),
-                                withParent(withId(R.id.container)))),
                         isDisplayed()));
         floatingEraseButton.perform(click());
         mDevice.wait(Until.findObject(By.res("org.mozilla.focus.debug","snackbar_text")), waitingTime);
