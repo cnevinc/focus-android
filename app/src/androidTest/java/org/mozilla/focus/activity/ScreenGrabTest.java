@@ -151,6 +151,17 @@ public class ScreenGrabTest {
         webView.waitForExists(waitingTime);
         Screengrab.screenshot("About_Page");
 
+        /* Help Page */
+        mDevice.pressBack();
+        menuButton.perform(click());
+        UiObject HelpItem = mDevice.findObject(new UiSelector()
+                .className("android.widget.LinearLayout")
+                .instance(1)
+                .enabled(true));
+        HelpItem.click();
+        webView.waitForExists(waitingTime*5);
+        Screengrab.screenshot("Help_Page");
+
         /* Location Bar View */
         mDevice.pressBack();
         urlBar.click();
