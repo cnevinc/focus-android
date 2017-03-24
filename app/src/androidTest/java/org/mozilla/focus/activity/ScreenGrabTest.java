@@ -74,6 +74,7 @@ public class ScreenGrabTest {
             PreferenceManager.getDefaultSharedPreferences(appContext)
                     .edit()
                     .putBoolean(FIRSTRUN_PREF, false)
+                    .putBoolean(resources.getString(R.string.pref_key_secure), false)
                     .apply();
         }
     };
@@ -235,8 +236,8 @@ public class ScreenGrabTest {
         Screengrab.screenshot("Settings_View_Top");
 
         /* Search Engine List */
-        UiScrollable settingsList = new UiScrollable(new UiSelector()
-                .resourceId("android:id/list").scrollable(true));
+        UiObject settingsList = mDevice.findObject(new UiSelector()
+                .resourceId("android:id/list").enabled(true));
         UiObject SearchEngineSelection = settingsList.getChild(new UiSelector()
                 .className("android.widget.LinearLayout")
                 .instance(0));
