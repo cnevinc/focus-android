@@ -115,7 +115,7 @@ public class ScreenGrabTest {
         /* Home View*/
         firstViewBtn.click();
         UiObject urlBar = mDevice.findObject(new UiSelector()
-                .resourceId("org.mozilla.focus.debug:id/url")
+                .resourceId("org.mozilla.focus.debug:id/fake_urlbar")
                 .clickable(true));
         urlBar.waitForExists(waitingTime);
         Screengrab.screenshot("Home_View");
@@ -276,15 +276,19 @@ public class ScreenGrabTest {
                 .resourceId("errorTryAgain")
                 .clickable(true));
         mDevice.pressBack();
-
+        urlBar.click();
+        UiObject browserURLbar = mDevice.findObject(new UiSelector()
+                .resourceId("org.mozilla.focus.debug:id/display_url")
+                .clickable(true));
         for (ScreenGrabTest.ErrorTypes error: ScreenGrabTest.ErrorTypes.values()) {
-            urlBar.click();
+
             inlineAutocompleteEditText.waitForExists(waitingTime);
             inlineAutocompleteEditText.setText("error:"+ error.value);
             mDevice.pressKeyCode(KEYCODE_ENTER);
             webView.waitForExists(waitingTime);
             tryAgainBtn.waitForExists(waitingTime);
             Screengrab.screenshot(error.name());
+            browserURLbar.click();
         }
     }
 }
