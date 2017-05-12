@@ -214,6 +214,17 @@ public class ScreenGrabTest {
         applist.waitForExists(waitingTime);
         Screengrab.screenshot("Share_Dialog");
 
+        /* Notification bar caption */
+        mDevice.openNotification();
+        UiObject notificationBarDeleteItem = mDevice.findObject(new UiSelector()
+                .text("Erase browsing history")
+                .resourceId("android:id/text")
+                .enabled(true));
+        notificationBarDeleteItem.waitForExists(waitingTime);
+
+        Screengrab.screenshot("DeleteHistory_NotificationBar");
+        mDevice.pressBack();
+
         /* History Erase Notification */
         mDevice.pressBack();
         ViewInteraction floatingEraseButton = onView(
