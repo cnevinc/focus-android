@@ -246,12 +246,27 @@ public class ScreenGrabTest {
         mDevice.wait(Until.hasObject(settingsHeading),waitingTime);
         Screengrab.screenshot("Settings_View_Top");
 
-        /* Search Engine List */
+        /* Language List (First page only */
         UiObject settingsList = mDevice.findObject(new UiSelector()
                 .resourceId("android:id/list").enabled(true));
-        UiObject SearchEngineSelection = settingsList.getChild(new UiSelector()
+        UiObject LanguageSelection = settingsList.getChild(new UiSelector()
                 .className("android.widget.LinearLayout")
                 .instance(0));
+        LanguageSelection.click();
+        mDevice.wait(Until.gone(settingsHeading),waitingTime);
+
+        UiObject CancelBtn =  mDevice.findObject(new UiSelector()
+                .resourceId("android:id/button2")
+                .enabled(true)
+                .text("Cancel"));
+        Screengrab.screenshot("Language_Selection");
+        CancelBtn.click();
+        mDevice.wait(Until.hasObject(settingsHeading),waitingTime);
+
+        /* Search Engine List */
+        UiObject SearchEngineSelection = settingsList.getChild(new UiSelector()
+                .className("android.widget.LinearLayout")
+                .instance(1));
         SearchEngineSelection.click();
         mDevice.wait(Until.gone(settingsHeading),waitingTime);
         UiObject SearchEngineList = new UiScrollable(new UiSelector()
