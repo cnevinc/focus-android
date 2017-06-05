@@ -27,18 +27,19 @@ import org.mozilla.focus.web.BrowsingSession;
 import org.mozilla.focus.web.IWebView;
 import org.mozilla.focus.web.WebViewProvider;
 
-public class MainActivity extends LocaleAwareAppCompatActivity {
+public class MainActivity extends LocaleAwareAppCompatActivity implements MainPresenter.ViewContract {
     public static final String ACTION_ERASE = "erase";
     public static final String EXTRA_FINISH = "finish";
     public static final String EXTRA_TEXT_SELECTION = "text_selection";
     private static final String EXTRA_SHORTCUT = "shortcut";
 
-    private String pendingUrl;
+    MainPresenter mainPresenter;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        mainPresenter = MainPresenter.getInstnace(this);
         if (Settings.getInstance(this).shouldUseSecureMode()) {
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_SECURE);
         }
@@ -63,24 +64,14 @@ public class MainActivity extends LocaleAwareAppCompatActivity {
         if (savedInstanceState == null) {
             WebViewProvider.performCleanup(this);
 
-            if (Intent.ACTION_VIEW.equals(intent.getAction())) {
-                final String url = intent.getDataString();
-
+            final boolean isViewAction = Intent.ACTION_VIEW.equals(intent.getAction());
+            if (isViewAction) {
                 BrowsingSession.getInstance().loadCustomTabConfig(this, intent);
-
-                if (Settings.getInstance(this).shouldShowFirstrun()) {
-                    pendingUrl = url;
-                    showFirstrun();
-                } else {
-                    showBrowserScreen(url);
-                }
-            } else {
-                if (Settings.getInstance(this).shouldShowFirstrun()) {
-                    showFirstrun();
-                } else {
-                    showHomeScreen();
-                }
             }
+
+            final String url = intent.getData().toString();
+            mainPresenter.handleViewAction(isViewAction, url);
+
         }
 
         WebViewProvider.preload(this);
@@ -132,8 +123,11 @@ public class MainActivity extends LocaleAwareAppCompatActivity {
         if (Intent.ACTION_VIEW.equals(intent.getAction())) {
             // We can't update our fragment right now because we need to wait until the activity is
             // resumed. So just remember this URL and load it in onResumeFragments().
-            pendingUrl = intent.getDataString();
+            mainPresenter.updateUrl(intent.getDataString());
         }
+
+
+        // strange here
 
         // We do not care about the previous intent anymore. But let's remember this one.
         setIntent(unsafeIntent);
@@ -153,13 +147,8 @@ public class MainActivity extends LocaleAwareAppCompatActivity {
             setIntent(new Intent(Intent.ACTION_MAIN));
         }
 
-        if (pendingUrl != null && !Settings.getInstance(this).shouldShowFirstrun()) {
-            // We have received an URL in onNewIntent(). Let's load it now.
-            // Unless we're trying to show the firstrun screen, in which case we leave it pending until
-            // firstrun is dismissed.
-            showBrowserScreen(pendingUrl);
-            pendingUrl = null;
-        }
+        mainPresenter.showBrowserScreen();
+
     }
 
     private void processEraseAction(final SafeIntent intent) {
@@ -192,7 +181,7 @@ public class MainActivity extends LocaleAwareAppCompatActivity {
         }
     }
 
-    private void showHomeScreen() {
+    public void showHomeScreen() {
         // We add the home fragment to the layout if it doesn't exist yet. I tried adding the fragment
         // to the layout directly but then I wasn't able to remove it later. It was still visible but
         // without an activity attached. So let's do it manually.
@@ -205,7 +194,7 @@ public class MainActivity extends LocaleAwareAppCompatActivity {
         }
     }
 
-    private void showFirstrun() {
+    public void showFirstrun() {
         final FragmentManager fragmentManager = getSupportFragmentManager();
         if (fragmentManager.findFragmentByTag(FirstrunFragment.FRAGMENT_TAG) == null) {
             fragmentManager
@@ -215,14 +204,21 @@ public class MainActivity extends LocaleAwareAppCompatActivity {
         }
     }
 
-    private void showBrowserScreen(String url) {
+    @Override
+    public boolean shouldShowFirstrun() {
+        return Settings.getInstance(this).shouldShowFirstrun();
+    }
+
+    @Override
+    public void onShowBrowserScreen(String pendingUrl) {
         getSupportFragmentManager()
                 .beginTransaction()
                 .replace(R.id.container,
-                        BrowserFragment.create(url), BrowserFragment.FRAGMENT_TAG)
+                        BrowserFragment.create(pendingUrl), BrowserFragment.FRAGMENT_TAG)
                 .commit();
 
         final SafeIntent intent = new SafeIntent(getIntent());
+
 
         if (intent.getBooleanExtra(EXTRA_TEXT_SELECTION, false)) {
             TelemetryWrapper.textSelectionIntentEvent();
@@ -264,17 +260,10 @@ public class MainActivity extends LocaleAwareAppCompatActivity {
             // in the browsing history.
             return;
         }
-
         super.onBackPressed();
     }
 
     public void firstrunFinished() {
-        if (pendingUrl != null) {
-            // We have received an URL in onNewIntent(). Let's load it now.
-            showBrowserScreen(pendingUrl);
-            pendingUrl = null;
-        } else {
-            showHomeScreen();
-        }
+        mainPresenter.doFirstrunFinished();
     }
 }
