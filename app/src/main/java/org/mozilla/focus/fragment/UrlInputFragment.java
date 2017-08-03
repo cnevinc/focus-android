@@ -516,17 +516,17 @@ public class UrlInputFragment extends Fragment implements View.OnClickListener, 
                 return true;
 
             case R.id.about:
-                Intent aboutIntent = InfoActivity.getAboutIntent(getActivity());
+                Intent aboutIntent = InfoActivity.Companion.getAboutIntent(getActivity());
                 startActivity(aboutIntent);
                 return true;
 
             case R.id.rights:
-                Intent rightsIntent = InfoActivity.getRightsIntent(getActivity());
+                Intent rightsIntent = InfoActivity.Companion.getRightsIntent(getActivity());
                 startActivity(rightsIntent);
                 return true;
 
             case R.id.help:
-                Intent helpIntent = InfoActivity.getHelpIntent(getActivity());
+                Intent helpIntent = InfoActivity.Companion.getHelpIntent(getActivity());
                 startActivity(helpIntent);
                 return true;
 

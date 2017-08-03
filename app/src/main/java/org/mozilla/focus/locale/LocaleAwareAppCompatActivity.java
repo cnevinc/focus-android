@@ -89,7 +89,7 @@ public abstract class LocaleAwareAppCompatActivity
 
         onConfigurationChanged(getResources().getConfiguration());
 
-        if (resultCode == SettingsActivity.ACTIVITY_RESULT_LOCALE_CHANGED) {
+        if (resultCode == SettingsActivity.Companion.getACTIVITY_RESULT_LOCALE_CHANGED()) {
             applyLocale();
         }
     }

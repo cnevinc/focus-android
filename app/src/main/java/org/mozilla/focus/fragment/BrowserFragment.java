@@ -819,12 +819,12 @@ public class BrowserFragment extends WebFragment implements View.OnClickListener
             }
 
             case R.id.help:
-                Intent helpIntent = InfoActivity.getHelpIntent(getActivity());
+                Intent helpIntent = InfoActivity.Companion.getHelpIntent(getActivity());
                 startActivity(helpIntent);
                 break;
 
             case R.id.help_trackers:
-                Intent trackerHelpIntent = InfoActivity.getTrackerHelpIntent(getActivity());
+                Intent trackerHelpIntent = InfoActivity.Companion.getTrackerHelpIntent(getActivity());
                 startActivity(trackerHelpIntent);
                 break;
 

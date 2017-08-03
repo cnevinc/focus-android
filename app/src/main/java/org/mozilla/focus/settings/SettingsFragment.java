@@ -38,13 +38,13 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
     @Override
     public boolean onPreferenceTreeClick(PreferenceScreen preferenceScreen, Preference preference) {
         if (preference.getKey().equals(getResources().getString(R.string.pref_key_about))) {
-            final Intent intent = InfoActivity.getAboutIntent(getActivity());
+            final Intent intent = InfoActivity.Companion.getAboutIntent(getActivity());
             startActivity(intent);
         } else if (preference.getKey().equals(getResources().getString(R.string.pref_key_help))) {
-            Intent helpIntent = InfoActivity.getHelpIntent(getActivity());
+            Intent helpIntent = InfoActivity.Companion.getHelpIntent(getActivity());
             startActivity(helpIntent);
         } else if (preference.getKey().equals(getResources().getString(R.string.pref_key_rights))) {
-            final Intent intent = InfoActivity.getRightsIntent(getActivity());
+            final Intent intent = InfoActivity.Companion.getRightsIntent(getActivity());
             startActivity(intent);
         }
 
@@ -100,7 +100,7 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
             getActivity().onConfigurationChanged(getActivity().getResources().getConfiguration());
 
             // And ensure that the calling LocaleAware*Activity knows that the locale changed:
-            getActivity().setResult(SettingsActivity.ACTIVITY_RESULT_LOCALE_CHANGED);
+            getActivity().setResult(SettingsActivity.Companion.getACTIVITY_RESULT_LOCALE_CHANGED());
 
             // The easiest way to ensure we update the language is by replacing the entire fragment:
             getFragmentManager().beginTransaction()
