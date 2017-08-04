@@ -100,8 +100,8 @@ public class BrowsingNotificationService extends Service {
 
             case ACTION_ERASE:
                 final Intent activityIntent = new Intent(this, MainActivity.class);
-                activityIntent.setAction(MainActivity.Companion.getACTION_ERASE());
-                activityIntent.putExtra(MainActivity.Companion.getEXTRA_FINISH(), !foreground);
+                activityIntent.setAction(MainActivity.ACTION_ERASE);
+                activityIntent.putExtra(MainActivity.EXTRA_FINISH, !foreground);
 
                 if (!foreground) {
                     activityIntent.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
@@ -156,7 +156,7 @@ public class BrowsingNotificationService extends Service {
                 .setContentTitle(getString(R.string.app_name))
                 .setContentText(getString(R.string.notification_erase_text))
                 .setContentIntent(createNotificationIntent())
-                .setVisibility(Notification.VISIBILITY_SECRET)
+                .setVisibility(NotificationCompat.VISIBILITY_SECRET)
                 .setShowWhen(false)
                 .setLocalOnly(true)
                 .setColor(ContextCompat.getColor(this, R.color.colorFloatingActionButtonTint))
@@ -180,16 +180,16 @@ public class BrowsingNotificationService extends Service {
 
     private PendingIntent createOpenActionIntent() {
         final Intent intent = new Intent(this, MainActivity.class);
-        intent.setAction(MainActivity.Companion.getACTION_OPEN());
+        intent.setAction(MainActivity.ACTION_OPEN);
 
         return PendingIntent.getActivity(this, 1, intent, PendingIntent.FLAG_UPDATE_CURRENT);
     }
 
     private PendingIntent createOpenAndEraseActionIntent() {
         final Intent intent = new Intent(this, MainActivity.class);
-        intent.setAction(MainActivity.Companion.getACTION_ERASE());
-        intent.putExtra(MainActivity.Companion.getEXTRA_FINISH(), false);
-        intent.putExtra(MainActivity.Companion.getEXTRA_NOTIFICATION(), true);
+        intent.setAction(MainActivity.ACTION_ERASE);
+        intent.putExtra(MainActivity.EXTRA_FINISH, false);
+        intent.putExtra(MainActivity.EXTRA_NOTIFICATION, true);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
         return PendingIntent.getActivity(this, 2, intent, PendingIntent.FLAG_UPDATE_CURRENT);

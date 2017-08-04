@@ -448,7 +448,7 @@ public class UrlInputFragment extends Fragment implements View.OnClickListener, 
         // HomeFragment with an UrlInputFragment on top or an old BrowserFragment with an
         // UrlInputFragment.
         final BrowserFragment browserFragment = (BrowserFragment) fragmentManager
-                .findFragmentByTag(BrowserFragment.FRAGMENT_TAG);
+                .findFragmentByTag(BrowserFragment.Companion.getFRAGMENT_TAG());
 
         if (browserFragment != null && browserFragment.isVisible()) {
             // Reuse existing visible fragment - in this case we know the user is already browsing.
@@ -463,7 +463,7 @@ public class UrlInputFragment extends Fragment implements View.OnClickListener, 
         } else {
             fragmentManager
                     .beginTransaction()
-                    .replace(R.id.container, BrowserFragment.create(url), BrowserFragment.FRAGMENT_TAG)
+                    .replace(R.id.container, BrowserFragment.Companion.create(url), BrowserFragment.Companion.getFRAGMENT_TAG())
                     .commit();
         }
     }

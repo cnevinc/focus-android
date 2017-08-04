@@ -8,6 +8,7 @@ package org.mozilla.focus.activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
 import android.text.TextUtils
 import android.util.AttributeSet
@@ -171,7 +172,7 @@ class MainActivity : LocaleAwareAppCompatActivity() {
         val fromNotification = intent.getBooleanExtra(EXTRA_NOTIFICATION, false)
 
         val browserFragment = supportFragmentManager
-                .findFragmentByTag(BrowserFragment.FRAGMENT_TAG) as BrowserFragment?
+                .findFragmentByTag(BrowserFragment.FRAGMENT_TAG) as? BrowserFragment?
 
         if (browserFragment != null) {
             // We are currently displaying a browser fragment. Let the fragment handle the erase and
@@ -204,29 +205,21 @@ class MainActivity : LocaleAwareAppCompatActivity() {
         // visible but without an activity attached. So let's do it manually.
         val fragmentManager = supportFragmentManager
         if (fragmentManager.findFragmentByTag(UrlInputFragment.FRAGMENT_TAG) == null) {
-            fragmentManager
-                    .beginTransaction()
-                    .replace(R.id.container, UrlInputFragment.createWithBackground(), UrlInputFragment.FRAGMENT_TAG)
-                    .commit()
+            fragmentManager.safeReplace(R.id.container, UrlInputFragment.createWithBackground(), UrlInputFragment.FRAGMENT_TAG)
+
         }
     }
 
     private fun showFirstrun() {
         val fragmentManager = supportFragmentManager
         if (fragmentManager.findFragmentByTag(FirstrunFragment.FRAGMENT_TAG) == null) {
-            fragmentManager
-                    .beginTransaction()
-                    .replace(R.id.container, FirstrunFragment.create(), FirstrunFragment.FRAGMENT_TAG)
-                    .commit()
+            fragmentManager.safeReplace(R.id.container, FirstrunFragment.create(), FirstrunFragment.FRAGMENT_TAG)
         }
     }
 
     private fun showBrowserScreen(url: String?) {
-        supportFragmentManager
-                .beginTransaction()
-                .replace(R.id.container,
+        supportFragmentManager.safeReplace(R.id.container,
                         BrowserFragment.create(url), BrowserFragment.FRAGMENT_TAG)
-                .commit()
 
         val intent = SafeIntent(intent)
 
@@ -295,14 +288,21 @@ class MainActivity : LocaleAwareAppCompatActivity() {
         }
     }
 
-    companion object {
-        val ACTION_ERASE = "erase"
-        val ACTION_OPEN = "open"
 
-        val EXTRA_FINISH = "finish"
-        val EXTRA_TEXT_SELECTION = "text_selection"
-        val EXTRA_NOTIFICATION = "notification"
+    companion object {
+
+        const val ACTION_ERASE = "erase"
+        const val ACTION_OPEN = "open"
+
+        const val EXTRA_FINISH = "finish"
+        const val EXTRA_TEXT_SELECTION = "text_selection"
+        const val EXTRA_NOTIFICATION = "notification"
 
         private val EXTRA_SHORTCUT = "shortcut"
     }
+
+}
+
+fun FragmentManager.safeReplace(rId: Int, fragment: Fragment, name: String) {
+    this.beginTransaction().replace(rId, fragment, name).commit()
 }
