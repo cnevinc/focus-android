@@ -19,6 +19,7 @@ import android.os.Bundle
 import android.os.Environment
 import android.support.design.widget.AppBarLayout
 import android.support.v4.content.ContextCompat
+import android.support.v4.widget.SwipeRefreshLayout
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -81,6 +82,7 @@ class BrowserFragment : WebFragment(), View.OnClickListener, DownloadDialogFragm
 
     private var refreshButton: View? = null
     private var stopButton: View? = null
+    private var swipeRefresh: SwipeRefreshLayout? = null
 
     private var fullscreenCallback: IWebView.FullscreenCallback? = null
 
@@ -166,6 +168,9 @@ class BrowserFragment : WebFragment(), View.OnClickListener, DownloadDialogFragm
         } else {
             initialiseNormalBrowserUi(view)
         }
+
+        swipeRefresh = view.findViewById(R.id.swipeContainer) as SwipeRefreshLayout
+        swipeRefresh?.setOnRefreshListener { webView?.reload() }
 
         return view
     }
@@ -307,6 +312,9 @@ class BrowserFragment : WebFragment(), View.OnClickListener, DownloadDialogFragm
             }
 
             override fun onPageFinished(isSecure: Boolean) {
+
+                swipeRefresh?.isRefreshing = false
+
                 updateIsLoading(false)
 
                 backgroundTransition?.startTransition(ANIMATION_DURATION)
